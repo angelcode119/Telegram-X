@@ -1,0 +1,33 @@
+{
+  "project_info": {
+    "project_number": "1037154859800",
+    "project_id": "scenic-parity-125411",
+    "storage_bucket": "scenic-parity-125411.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037154859800:android:683d617a5fe76437",
+        "android_client_info": {
+          "package_name": "org.thunderdog.challegram"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_eeOn-j16lB49kGu_SnTujJwYNvMcWu4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
