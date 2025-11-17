@@ -21,8 +21,13 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // برای Firebase Crashlytics و Analytics
-        manifestPlaceholders["appPackageName"] = applicationId
+        // برای Firebase Crashlytics و Analytics - اصلاح شده
+        manifestPlaceholders["appPackageName"] = applicationId.toString()
+        
+        // برای پشتیبانی از armeabi-v7a, arm64-v8a, x86, x86_64 - جابجا شده به اینجا
+        ndk {
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+        }
     }
 
     buildTypes {
@@ -52,11 +57,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    // برای پشتیبانی از armeabi-v7a, arm64-v8a, x86, x86_64
-    ndk {
-        abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
     }
 }
 
