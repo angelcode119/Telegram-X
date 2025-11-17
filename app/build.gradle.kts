@@ -75,11 +75,11 @@ dependencies {
 
     // Firebase BOM
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-storage-ktx")
-    implementation("com.google.firebase:firebase-messaging-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    // implementation("com.google.firebase:firebase-analytics-ktx")  // حذف موقت
+    // implementation("com.google.firebase:firebase-firestore-ktx")  // حذف موقت
+    // implementation("com.google.firebase:firebase-storage-ktx")    // حذف موقت
+    implementation("com.google.firebase:firebase-messaging-ktx")      // فقط FCM نگه دار
+    // implementation("com.google.firebase:firebase-crashlytics-ktx") // حذف - این مشکل ساز بود!
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
