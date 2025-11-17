@@ -11,6 +11,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -163,7 +165,7 @@ fun FirebaseTokenScreen() {
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.ContentCopy,
+                            imageVector = Icons.Default.ContentCopy,
                             contentDescription = "Copy",
                             modifier = Modifier.size(18.dp)
                         )
@@ -193,10 +195,6 @@ fun FirebaseTokenScreen() {
         }
     }
 }
-
-// آیکون‌ها
-@Composable
-fun Icons = androidx.compose.material.icons.Icons
 
 @Preview(showBackground = true)
 @Composable
