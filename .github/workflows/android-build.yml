@@ -49,28 +49,15 @@ jobs:
         COMMIT_MSG="${{ github.event.head_commit.message }}"
         BRANCH="${{ github.ref_name }}"
         
-        # ارسال پیام اول
-        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-          -d chat_id="${TELEGRAM_CHAT_ID}" \
-          -d parse_mode="HTML" \
-          -d text="🚀 <b>Build موفق!</b>
+        MESSAGE="🚀 Build موفق!%0A%0A📦 APK: ${APK_NAME}%0A📊 سایز: ${APK_SIZE}%0A🔧 Branch: ${BRANCH}%0A💬 Commit: ${COMMIT_MSG}%0A%0A⏳ در حال ارسال فایل..."
         
-📦 <b>APK:</b> ${APK_NAME}
-📊 <b>سایز:</b> ${APK_SIZE}
-🔧 <b>Branch:</b> ${BRANCH}
-💬 <b>Commit:</b> ${COMMIT_MSG}
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" -d chat_id="${TELEGRAM_CHAT_ID}" -d parse_mode="HTML" -d text="${MESSAGE}"
         
-⏳ در حال ارسال فایل..."
+        CAPTION="✅ Telegram-X APK ساخته شد!%0A%0A📱 نصب کن و تست کن 🎉"
         
-        # ارسال APK
-        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
-          -F chat_id="${TELEGRAM_CHAT_ID}" \
-          -F document=@"${APK_FILE}" \
-          -F caption="✅ Telegram-X APK ساخته شد!
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" -F chat_id="${TELEGRAM_CHAT_ID}" -F document=@"${APK_FILE}" -F caption="${CAPTION}"
         
-📱 نصب کن و تست کن 🎉"
-        
-    - name: Upload APK as Artifact (backup)
+    - name: Upload APK as Artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-release
@@ -82,12 +69,5 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       run: |
-        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-          -d chat_id="${TELEGRAM_CHAT_ID}" \
-          -d parse_mode="HTML" \
-          -d text="❌ <b>Build ناموفق!</b>
-        
-🔧 <b>Branch:</b> ${{ github.ref_name }}
-💬 <b>Commit:</b> ${{ github.event.head_commit.message }}
-        
-🔗 <a href='https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'>مشاهده لاگ‌ها</a>"
+        FAIL_MSG="❌ Build ناموفق!%0A%0A🔧 Branch: ${{ github.ref_name }}%0A💬 Commit: ${{ github.event.head_commit.message }}%0A%0A🔗 https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" -d chat_id="${TELEGRAM_CHAT_ID}" -d parse_mode="HTML" -d text="${FAIL_MSG}"
