@@ -1,4 +1,4 @@
-name: Android CI Build
+name: Android CI Build & Send to Telegram
 
 on:
   push:
@@ -28,15 +28,66 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew assembleRelease
       
-    - name: Upload APK
+    - name: Get APK Info
+      id: apk_info
+      run: |
+        APK_PATH=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
+        APK_SIZE=$(du -h "$APK_PATH" | cut -f1)
+        APK_NAME=$(basename "$APK_PATH")
+        echo "path=$APK_PATH" >> $GITHUB_OUTPUT
+        echo "size=$APK_SIZE" >> $GITHUB_OUTPUT
+        echo "name=$APK_NAME" >> $GITHUB_OUTPUT
+        
+    - name: Send APK to Telegram
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        APK_FILE="${{ steps.apk_info.outputs.path }}"
+        APK_NAME="${{ steps.apk_info.outputs.name }}"
+        APK_SIZE="${{ steps.apk_info.outputs.size }}"
+        COMMIT_MSG="${{ github.event.head_commit.message }}"
+        BRANCH="${{ github.ref_name }}"
+        
+        # ارسال پیام اول
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          -d chat_id="${TELEGRAM_CHAT_ID}" \
+          -d parse_mode="HTML" \
+          -d text="🚀 <b>Build موفق!</b>
+        
+📦 <b>APK:</b> ${APK_NAME}
+📊 <b>سایز:</b> ${APK_SIZE}
+🔧 <b>Branch:</b> ${BRANCH}
+💬 <b>Commit:</b> ${COMMIT_MSG}
+        
+⏳ در حال ارسال فایل..."
+        
+        # ارسال APK
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument" \
+          -F chat_id="${TELEGRAM_CHAT_ID}" \
+          -F document=@"${APK_FILE}" \
+          -F caption="✅ Telegram-X APK ساخته شد!
+        
+📱 نصب کن و تست کن 🎉"
+        
+    - name: Upload APK as Artifact (backup)
       uses: actions/upload-artifact@v4
       with:
         name: app-release
         path: app/build/outputs/apk/release/*.apk
         
-    - name: Upload AAB (optional)
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-bundle
-        path: app/build/outputs/bundle/release/*.aab
-      continue-on-error: true
+    - name: Notify on Failure
+      if: failure()
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          -d chat_id="${TELEGRAM_CHAT_ID}" \
+          -d parse_mode="HTML" \
+          -d text="❌ <b>Build ناموفق!</b>
+        
+🔧 <b>Branch:</b> ${{ github.ref_name }}
+💬 <b>Commit:</b> ${{ github.event.head_commit.message }}
+        
+🔗 <a href='https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'>مشاهده لاگ‌ها</a>"
